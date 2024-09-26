@@ -1,0 +1,37 @@
+# prompt: make app with streamlit and explain the process stream run py
+
+# Assuming you have 'ensemble_model.pkl' in the same directory as your Streamlit app
+
+!pip install streamlit
+import streamlit as st
+import pandas as pd
+import pickle
+
+# Load the trained model
+with open('ensemble_model.pkl', 'rb') as file:
+  ensemble_model = pickle.load(file)
+
+def predict_revenue(input_data):
+  """Predicts monthly revenue based on input features."""
+  prediction = ensemble_model.predict([input_data])
+  return prediction[0]
+
+
+def main():
+  st.title("Monthly Revenue Prediction App")
+
+  # Create input fields for features
+  st.header("Input Features")
+  num_subscribers = st.number_input("Number of Subscribers", min_value=0)
+  average_view_duration = st.number_input("Average View Duration (seconds)", min_value=0)
+  content_views = st.number_input("Total Content Views", min_value=0)
+  average_engagement_rate = st.number_input("Average Engagement Rate (%)", min_value=0.0, max_value=100.0)
+
+  # Make a prediction when the user clicks the button
+  if st.button("Predict Revenue"):
+    input_data = [num_subscribers, average_view_duration, content_views, average_engagement_rate]
+    prediction = predict_revenue(input_data)
+    st.success(f"Predicted Monthly Revenue: ${prediction:.2f}")
+
+if __name__ == '__main__':
+  main()
